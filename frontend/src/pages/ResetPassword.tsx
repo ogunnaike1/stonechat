@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Footer from "./Footer";
+
 
 const ResetPasswordForm = () => {
   const [show, setShow] = useState(false);
@@ -22,46 +22,46 @@ const ResetPasswordForm = () => {
             />
 
             {/* New Password */}
-            <div className="relative">
-              <input
-                type={show ? "text" : "password"}
-                placeholder="Enter password"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 pr-16 focus:outline-none focus:border-blue-500"
-              />
-              <button
-                type="button"
-                onClick={handleClick}
-                className="absolute right-3 top-2 text-sm text-blue-600 hover:underline"
-              >
-                {show ? "Hide" : "Show"}
-              </button>
+            <div className="flex items-center w-full border border-gray-300 rounded-lg focus-within:border-blue-500">
+                <input
+                    type={show ? "text" : "password"}
+                    placeholder="Enter password"
+                    className="flex-1 px-4 py-2 focus:outline-none min-w-0"
+                />
+                <button
+                    type="button"
+                    onClick={handleClick}
+                    className="px-3 text-sm text-blue-600 hover:underline whitespace-nowrap"
+                >
+                    {show ? "Hide" : "Show"}
+                </button>
             </div>
+
 
             {/* Confirm Password */}
-            <div className="relative">
-              <input
-                type={show ? "text" : "password"}
-                placeholder="Confirm password"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 pr-16 focus:outline-none focus:border-blue-500"
-              />
-              <button
-                type="button"
-                onClick={handleClick}
-                className="absolute right-3 top-2 text-sm text-blue-600 hover:underline"
-              >
-                {show ? "Hide" : "Show"}
-              </button>
-            </div>
+            <div className="flex items-center w-full border border-gray-300 rounded-lg focus-within:border-blue-500">
+                <input
+                    type={show ? "text" : "password"}
+                    placeholder="Confirm password"
+                    className="flex-1 px-4 py-2 focus:outline-none min-w-0"
+                />
+                <button
+                    type="button"
+                    onClick={handleClick}
+                    className="px-3 text-sm text-blue-600 hover:underline whitespace-nowrap"
+                >
+                    {show ? "Hide" : "Show"}
+                </button>
+           </div>
+
 
             {/* Submit */}
-            <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+            <button className="w-full !bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
               Reset Password
             </button>
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };
