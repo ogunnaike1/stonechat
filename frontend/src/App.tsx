@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import viteLogo from '/vite.svg'
 import SignUp from './pages/Signup';
 import ForgotPasswordForm from './pages/Forgotpassword';
+import LoginForm from './pages/Login';
 import './App.css'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
 <div >
   <Routes>  
     <Route path="/" element={<SignUp/>}/>
+    <Route path="/login" element={<LoginForm/>}/>
     <Route path="/forget-password" element={<ForgotPasswordForm email={''} onSetEmail={function (event: React.ChangeEvent<HTMLInputElement>): void {
           throw new Error('Function not implemented.');
         } } onClick={function (): void {
