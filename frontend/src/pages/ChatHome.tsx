@@ -60,24 +60,23 @@ const ChatHome = () => {
                 </div>
             </div>
 
-            <div className='bg-red-400 h-[85vh]'>
+            <div className='bg-[#F3F4F6]'>
 
-                <div>
 
-                    <div className='flex items-center h-[10vh] bg-amber-200 justify-between w-[90%] mx-auto'>
-                        <div className='flex gap-[10px]'>
+                    <div className='flex h-[10vh] py-[10px]  justify-between w-[90%] mx-auto border-t-[1px] border-[#B2B2B3]'>
+                        <div className='flex gap-[15px] items-center'>
                         <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
-                            <div className='flex flex-col'>
-                                <span>Usman ogunnaike</span>
-                                <span>hey pretty girl</span>
+                            <div className='flex flex-col bg-amber-400 h-[100%] justify-between'>
+                                <span className=' text-[#404872] text-[18px] font-[600] '>Usman ogunnaike</span>
+                                <span className='truncate w-[300px] bg-amber-50 text-[#B2B2B3] text-[14px]'>hey pretty girl hey pretty girlhey pretty girlhey pretty girl</span>
                             </div>
                         </div>
 
-                        <span>8:08 pm</span>
+                        <span className='text-[16px] text-blue-500'>8:08 pm</span>
                     </div>
                 
 
-                </div>
+               
 
             </div>
 
