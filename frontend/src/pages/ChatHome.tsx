@@ -39,8 +39,9 @@ const ChatHome = () => {
                         <div className="flex-1 w-[90%] overflow-y-auto space-y-4">
                     
                     {/* Response message (left) */}
-                    <div className="flex flex-col items-start">
-                    <div className="bg-white px-4 py-2 rounded-lg shadow max-w-xs">
+                    <div className="flex items-start gap-[10px]">
+                    <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
+                    <div className="bg-white px-4 py-2 rounded-b-lg rounded-tr-lg shadow max-w-xs">
                         <p className="text-gray-800">
                         Hello! How can I help you today?
                         </p>
