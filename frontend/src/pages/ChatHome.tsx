@@ -14,11 +14,28 @@ const ChatHome = () => {
                 <div className='flex gap-[20px]'>
                     <span className='px-[30px] border-r-[2px] border-blue-800 '>Homepage</span>
                     <div className='flex gap-[20px] items-center'>
-                        <img className='h-[35px] w-[35px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
+                        <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
                         <span>usman ogunnaike</span>
                         <span className='text-blue-950 px-[15px]'><FaChevronRight /></span>
                     </div>
                 </div>
+            </div>
+
+            <div className='h-[13vh] bg-white'>
+               <div className='w-[90%] mx-auto flex justify-between items-center h-[100%]'>
+                    <div className='flex gap-[20px] items-center'>
+                                    <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
+                                    <span>usman ogunnaike</span>
+                    </div>
+                    <span className='text-[20px]'><BsThreeDotsVertical /></span>
+
+               </div>
+               
+
+            </div>
+
+            <div className='bg-[#EDF0F9] h-[72vh]'>
+
             </div>
 
         </div>
@@ -41,6 +58,27 @@ const ChatHome = () => {
                 <input className=' w-[70%] outline-0 h-[80%] ml-[10px] ' type="text" placeholder='Search for a chat' />
                 
                 </div>
+            </div>
+
+            <div className='bg-red-400 h-[85vh]'>
+
+                <div>
+
+                    <div className='flex items-center h-[10vh] bg-amber-200 justify-between w-[90%] mx-auto'>
+                        <div className='flex gap-[10px]'>
+                        <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
+                            <div className='flex flex-col'>
+                                <span>Usman ogunnaike</span>
+                                <span>hey pretty girl</span>
+                            </div>
+                        </div>
+
+                        <span>8:08 pm</span>
+                    </div>
+                
+
+                </div>
+
             </div>
 
         </div>
