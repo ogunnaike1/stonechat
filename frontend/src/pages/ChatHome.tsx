@@ -36,6 +36,37 @@ const ChatHome = () => {
 
             <div className='bg-[#EDF0F9] h-[72vh]'>
 
+            <div className="flex-1 overflow-y-auto space-y-4">
+        
+                {/* Response message (left) */}
+                <div className="flex items-start">
+                <div className="bg-white px-4 py-2 rounded-lg shadow max-w-xs">
+                    <p className="text-gray-800">
+                    Hello! How can I help you today?
+                    </p>
+                </div>
+                </div>
+
+                {/* Sent message (right) */}
+                <div className="flex items-start justify-end">
+                <div className="bg-blue-500 px-4 py-2 rounded-lg shadow max-w-xs">
+                    <p className="text-white">
+                    I want to know more about your services.
+                    </p>
+                </div>
+                </div>
+
+                {/* Another response */}
+                <div className="flex items-start">
+                <div className="bg-white px-4 py-2 rounded-lg shadow max-w-xs">
+                    <p className="text-gray-800">
+                    Sure! We offer a range of solutions for businesses like yours.
+                    </p>
+                </div>
+                </div>
+
+            </div>
+
             </div>
 
         </div>
@@ -60,23 +91,19 @@ const ChatHome = () => {
                 </div>
             </div>
 
-            <div className='bg-[#F3F4F6]'>
-
-
-                    <div className='flex h-[10vh] py-[10px]  justify-between w-[90%] mx-auto border-t-[1px] border-[#B2B2B3]'>
-                        <div className='flex gap-[15px] items-center'>
-                        <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
-                            <div className='flex flex-col bg-amber-400 h-[100%] justify-between'>
-                                <span className=' text-[#404872] text-[18px] font-[600] '>Usman ogunnaike</span>
-                                <span className='truncate w-[300px] bg-amber-50 text-[#B2B2B3] text-[14px]'>hey pretty girl hey pretty girlhey pretty girlhey pretty girl</span>
-                            </div>
-                        </div>
-
-                        <span className='text-[16px] text-blue-500'>8:08 pm</span>
-                    </div>
-                
-
-               
+            <div className='bg-[#F3F4F6] overflow-y-scroll h-[85vh] '>
+                    < ChatMessages/>
+                    < ChatMessages/>
+                    < ChatMessages/>
+                    < ChatMessages/>
+                    < ChatMessages/>
+                    < ChatMessages/>
+                    < ChatMessages/>
+                    < ChatMessages/>
+                    < ChatMessages/>
+                    < ChatMessages/>
+                    < ChatMessages/>
+                    < ChatMessages/>
 
             </div>
 
@@ -87,3 +114,20 @@ const ChatHome = () => {
 }
 
 export default ChatHome
+
+
+export const ChatMessages = () =>{
+    return(
+        <div className='flex h-[10vh] py-[10px] px-[10px]  justify-between w-[90%] rounded-[10px] hover:bg-[#dbdada] mx-auto border-t-[1px] border-[#d7d7d9]'>
+        <div className='flex gap-[15px] items-center'>
+        <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
+            <div className='flex flex-col  h-[100%] justify-between'>
+                <span className=' text-[#404872] text-[18px] font-[600] '>Usman ogunnaike</span>
+                <span className='truncate w-[250px]  text-[#B2B2B3] text-[14px]'>hey pretty girl hey pretty girlhey pretty girlhey pretty girl</span>
+            </div>
+        </div>
+
+        <span className='text-[16px] text-blue-500'>8:08 pm</span>
+    </div>
+    )
+}
