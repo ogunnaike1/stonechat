@@ -34,38 +34,53 @@ const ChatHome = () => {
 
             </div>
 
-            <div className='bg-[#EDF0F9] h-[72vh]'>
+            <div className='bg-[#EDF0F9] h-[72vh] pt-[30px]'>
 
-            <div className="flex-1 overflow-y-auto space-y-4">
-        
-                {/* Response message (left) */}
-                <div className="flex items-start">
-                <div className="bg-white px-4 py-2 rounded-lg shadow max-w-xs">
-                    <p className="text-gray-800">
-                    Hello! How can I help you today?
-                    </p>
-                </div>
+                        <div className="flex-1 w-[90%] overflow-y-auto space-y-4">
+                    
+                    {/* Response message (left) */}
+                    <div className="flex flex-col items-start">
+                    <div className="bg-white px-4 py-2 rounded-lg shadow max-w-xs">
+                        <p className="text-gray-800">
+                        Hello! How can I help you today?
+                        </p>
+                    </div>
+                    <span className="text-xs text-gray-500 mt-1">10:30 AM</span>
+                    </div>
+
+                    {/* Sent message (right) */}
+                    <div className="flex flex-col items-end">
+                    <div className="bg-blue-500 px-4 py-2 rounded-lg shadow max-w-xs">
+                        <p className="text-white">
+                        I want to know more about your services.
+                        </p>
+                    </div>
+                    <span className="text-xs text-gray-400 mt-1">10:31 AM</span>
+                    </div>
+
+                    {/* Another response */}
+                    <div className="flex flex-col items-start">
+                    <div className="bg-white px-4 py-2 rounded-lg shadow max-w-xs">
+                        <p className="text-gray-800">
+                        Sure! We offer a range of solutions for businesses like yours.
+                        </p>
+                    </div>
+                    <span className="text-xs text-gray-500 mt-1">10:32 AM</span>
+                    </div>
+
                 </div>
 
-                {/* Sent message (right) */}
-                <div className="flex items-start justify-end">
-                <div className="bg-blue-500 px-4 py-2 rounded-lg shadow max-w-xs">
-                    <p className="text-white">
-                    I want to know more about your services.
-                    </p>
+                {/* Send message input */}
+                <div className="flex items-center mt-4 space-x-2">
+                    <input
+                    type="text"
+                    placeholder="Type your message..."
+                    className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600">
+                    Send
+                    </button>
                 </div>
-                </div>
-
-                {/* Another response */}
-                <div className="flex items-start">
-                <div className="bg-white px-4 py-2 rounded-lg shadow max-w-xs">
-                    <p className="text-gray-800">
-                    Sure! We offer a range of solutions for businesses like yours.
-                    </p>
-                </div>
-                </div>
-
-            </div>
 
             </div>
 
