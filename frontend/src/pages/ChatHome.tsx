@@ -48,7 +48,7 @@ const ChatHome = () => {
 
             <div className='bg-[#EDF0F9]  h-[72vh] pt-[30px]'>
 
-                    <div className="flex-1 bg-amber-200 px-[25px] h-[55vh] overflow-y-auto space-y-4">
+                    <div className="flex-1 px-[25px] h-[55vh] overflow-y-auto space-y-4">
                     
                     {/* Response message (left) */}
                     <div className="flex items-start gap-[10px] ">
@@ -73,24 +73,12 @@ const ChatHome = () => {
                     <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
                     </div>
 
-                    {/* Another response */}
-                    <div className="flex flex-col items-start">
-                    <div className="bg-white px-4 py-2 rounded-lg shadow max-w-xs">
-                        <p className="text-gray-800">
-                        Sure! We offer a range of solutions for businesses like yours.
-                        </p>
-                    </div>
-                    <span className="text-xs text-gray-500 mt-1">10:32 AM</span>
-                    </div>
-
-
-            
        
                 </div>
                     {/* Send message input */}
 
                     <div className="w-full">
-                        <div className="flex w-[80%] py-[5px] mx-auto items-center rounded-[8px] px-[20px] bg-white space-x-2 border border-transparent focus-within:border-blue-500 transition-colors duration-200">
+                        <div className="flex w-[80%] py-[5px] shadow-lg mx-auto items-center rounded-[8px] px-[20px] bg-white space-x-2 border border-transparent focus-within:border-blue-500 transition-colors duration-200">
                             <textarea
                             ref={textareaRef}
                             value={message}
@@ -107,7 +95,7 @@ const ChatHome = () => {
                             <IoSendSharp />
                             </button>
                         </div>
-                        </div>
+                    </div>
 
 
 
