@@ -96,9 +96,6 @@ const ChatHome = () => {
                             </button>
                         </div>
                     </div>
-
-
-
             </div>
 
         </div>
