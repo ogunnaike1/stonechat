@@ -1,11 +1,23 @@
-import React from 'react'
+import React, { useRef, useState, type ChangeEvent } from 'react'
 import { RxHamburgerMenu } from "react-icons/rx";
 import { FaChevronRight } from "react-icons/fa6";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoMdSearch } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
+import { IoSendSharp } from "react-icons/io5";
 
 const ChatHome = () => {
+    const [message, setMessage] = useState("");
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  
+    const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
+      const textarea = textareaRef.current;
+      if (textarea) {
+        textarea.style.height = "auto"; // reset to shrink
+        textarea.style.height = `${textarea.scrollHeight}px`; // expand to fit content
+      }
+      setMessage(e.target.value);
+    };
   return (
     <div className='flex'>
         <div className='w-[70vw]'>
@@ -34,14 +46,14 @@ const ChatHome = () => {
 
             </div>
 
-            <div className='bg-[#EDF0F9] h-[72vh] pt-[30px]'>
+            <div className='bg-[#EDF0F9]  h-[72vh] pt-[30px]'>
 
-                        <div className="flex-1 w-[90%] overflow-y-auto space-y-4">
+                    <div className="flex-1 bg-amber-200 px-[25px] h-[55vh] overflow-y-auto space-y-4">
                     
                     {/* Response message (left) */}
-                    <div className="flex items-start gap-[10px]">
+                    <div className="flex items-start gap-[10px] ">
                     <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
-                    <div className="bg-white px-4 py-2 rounded-b-lg rounded-tr-lg shadow max-w-xs">
+                    <div className="bg-white shadow-lg px-4 py-2 rounded-b-lg rounded-tr-lg  max-w-xs">
                         <p className="text-gray-800">
                         Hello! How can I help you today?
                         </p>
@@ -50,13 +62,15 @@ const ChatHome = () => {
                     </div>
 
                     {/* Sent message (right) */}
-                    <div className="flex flex-col items-end">
-                    <div className="bg-blue-500 px-4 py-2 rounded-lg shadow max-w-xs">
+                    <div className="flex justify-end gap-[10px] items-start">
+                    <span className="text-xs text-gray-400 mt-1">10:31 AM</span>
+                    <div className="bg-blue-500 px-4 py-2 rounded-b-lg rounded-tl-lg shadow-lg max-w-xs">
                         <p className="text-white">
                         I want to know more about your services.
                         </p>
                     </div>
-                    <span className="text-xs text-gray-400 mt-1">10:31 AM</span>
+                  
+                    <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
                     </div>
 
                     {/* Another response */}
@@ -69,19 +83,33 @@ const ChatHome = () => {
                     <span className="text-xs text-gray-500 mt-1">10:32 AM</span>
                     </div>
 
-                </div>
 
-                {/* Send message input */}
-                <div className="flex items-center mt-4 space-x-2">
-                    <input
-                    type="text"
-                    placeholder="Type your message..."
-                    className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600">
-                    Send
-                    </button>
+            
+       
                 </div>
+                    {/* Send message input */}
+
+                    <div className="w-full">
+                        <div className="flex w-[80%] py-[5px] mx-auto items-center rounded-[8px] px-[20px] bg-white space-x-2 border border-transparent focus-within:border-blue-500 transition-colors duration-200">
+                            <textarea
+                            ref={textareaRef}
+                            value={message}
+                            onChange={handleInput}
+                            placeholder="Type your message..."
+                            rows={1}
+                            className="w-full resize-none overflow-y-auto outline-0 py-2"
+                            style={{
+                                minHeight: "2rem", // about 1 line
+                                maxHeight: "4rem", // about 4 lines
+                            }}
+                            />
+                            <button className="text-blue-500 hover:bg-[#dbdada] text-[24px] px-2 py-2 rounded-full ">
+                            <IoSendSharp />
+                            </button>
+                        </div>
+                        </div>
+
+
 
             </div>
 
