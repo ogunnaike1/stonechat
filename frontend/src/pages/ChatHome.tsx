@@ -5,6 +5,8 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoMdSearch } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 import { IoSendSharp } from "react-icons/io5";
+import { BsChatDotsFill } from "react-icons/bs";
+
 
 const ChatHome = () => {
     const [message, setMessage] = useState("");
@@ -96,6 +98,17 @@ const ChatHome = () => {
                             </button>
                         </div>
                     </div>
+            </div>
+
+
+            {/*sidebar */}
+
+            <div>
+                <div>
+                    <div>
+                    <BsChatDotsFill />
+                    </div>
+                </div>
             </div>
 
         </div>
