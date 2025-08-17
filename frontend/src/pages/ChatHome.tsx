@@ -6,10 +6,13 @@ import { IoMdSearch } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 import { IoSendSharp } from "react-icons/io5";
 import { BsChatDotsFill } from "react-icons/bs";
+import { RiShoppingBag4Fill } from "react-icons/ri";
+import { FaRegWindowClose } from "react-icons/fa";
 
 
 const ChatHome = () => {
     const [message, setMessage] = useState("");
+    const [openedSidebar, setOpenedSidebar] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   
     const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -22,9 +25,9 @@ const ChatHome = () => {
     };
   return (
     <div className='flex'>
-        <div className='w-[70vw]'>
+        <div className='w-[70vw] relative'>
             <div className='h-[15vh] w-full !bg-blue-500 flex justify-between items-center text-white'>
-                <span className='ml-[25px] text-[25px]'><RxHamburgerMenu /></span>
+                <button onClick={()=>setOpenedSidebar(true)}  className='ml-[25px] text-[25px]'><RxHamburgerMenu /></button>
                 <div className='flex gap-[20px]'>
                     <span className='px-[30px] border-r-[2px] border-blue-800 '>Homepage</span>
                     <div className='flex gap-[20px] items-center'>
@@ -57,7 +60,7 @@ const ChatHome = () => {
                     <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
                     <div className="bg-white shadow-lg px-4 py-2 rounded-b-lg rounded-tr-lg  max-w-xs">
                         <p className="text-gray-800">
-                        Hello! How can I help you today?
+                        Hello! How can I help you today? 
                         </p>
                     </div>
                     <span className="text-xs text-gray-500 mt-1">10:30 AM</span>
@@ -102,14 +105,34 @@ const ChatHome = () => {
 
 
             {/*sidebar */}
-
-            <div>
-                <div>
-                    <div>
-                    <BsChatDotsFill />
+          {
+            openedSidebar &&(
+                <div className='w-[80px] bg-white h-[100vh] absolute top-0 pt-[10px]'>
+                <div className='w-full flex flex-col items-center gap-[10px]'>
+                    <div className='flex flex-col gap-[2px] items-center'>
+                        <button onClick={()=>setOpenedSidebar(false)} className='text-[40px] text-[#9EA4BC] rounded-[10px] p-[8px] bg-gray-200'>
+                        <FaRegWindowClose />
+                        </button>
+                        <span className='text-[#9EA4BC] text-[14px]'>Close</span>
+                    </div>
+                    <div className='flex flex-col gap-[2px] items-center'>
+                        <button className='text-[40px] text-[#9EA4BC] rounded-[10px] p-[8px] bg-gray-200'>
+                        <RiShoppingBag4Fill />
+                        </button>
+                        <span className='text-[#9EA4BC] text-[14px]'>chat</span>
+                    </div>
+                    <div className='flex flex-col gap-[2px] items-center'>
+                        <button className='text-[40px] text-[#9EA4BC] rounded-[10px] p-[8px] bg-gray-200'>
+                        <BsChatDotsFill />
+                        </button>
+                        <span className='text-[#9EA4BC] text-[14px]'>chat</span>
                     </div>
                 </div>
             </div>
+
+            )
+          }
+     
 
         </div>
         
