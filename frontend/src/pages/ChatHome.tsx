@@ -25,7 +25,7 @@ const ChatHome = () => {
     };
   return (
     <div className='flex'>
-        <div className='w-[70vw] relative'>
+        <div className='w-[70vw] relative lg:block hidden'>
             <div className='h-[15vh] w-full !bg-blue-500 flex justify-between items-center text-white'>
                 <button onClick={()=>setOpenedSidebar(true)}  className='ml-[25px] text-[25px]'><RxHamburgerMenu /></button>
                 <div className='flex gap-[20px]'>
@@ -137,7 +137,7 @@ const ChatHome = () => {
         </div>
         
          {/* Second div */}
-        <div className='w-[30vw]'>
+        <div className='lg:w-[30vw] w-full'>
             <div className='h-[15vh] w-full  !bg-blue-700 '>
                 <div className='text-white flex w-[90%] pt-[10px] mx-auto items-center justify-between'>
                     <span className='text-[20px] font-[700]'>STONECHAT</span>
@@ -183,16 +183,25 @@ export default ChatHome
 
 export const ChatMessages = () =>{
     return(
-    <div className='flex h-[10vh] py-[10px] px-[10px]  justify-between w-[90%] rounded-[10px] hover:bg-[#dbdada] mx-auto border-t-[1px] border-[#d7d7d9]'>
-        <div className='flex gap-[15px] items-center'>
-        <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
-            <div className='flex flex-col  h-[100%] justify-between'>
-                <span className=' text-[#404872] text-[18px] font-[600] '>Usman ogunnaike</span>
-                <span className='truncate w-[250px]  text-[#B2B2B3] text-[14px]'>hey pretty girl hey pretty girlhey pretty girlhey pretty girl</span>
+            <div className="flex h-[10vh] py-[10px] px-[10px] justify-between w-[90%] rounded-[10px] hover:bg-[#dbdada] mx-auto border-t border-[#d7d7d9]">
+            {/* Left side: avatar + name + message */}
+            <div className="flex gap-[15px] items-center min-w-0">
+                <img
+                className="h-[40px] w-[40px] rounded-full flex-shrink-0"
+                src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg"
+                alt=""
+                />
+                <div className="flex flex-col min-w-0">
+                <span className="text-[#404872] text-[18px] font-[600]">Usman Ogunnaike</span>
+                <span className="truncate text-[#B2B2B3] text-[14px]">
+                    hey pretty girl hey pretty girl hey pretty girl hey pretty girl
+                </span>
+                </div>
             </div>
-        </div>
 
-        <div className='text-[16px] text-blue-500 whitespace-nowrap'>8:08 pm</div>
-    </div>
+            {/* Right side: time */}
+            <div className="text-[16px] text-blue-500 whitespace-nowrap pl-2">8:08 pm</div>
+            </div>
+
     )
 }
