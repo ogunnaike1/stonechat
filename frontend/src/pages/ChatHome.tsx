@@ -39,7 +39,7 @@ const ChatHome = () => {
             </div>
 
             <div className='h-[13vh] bg-white'>
-               <div className='w-[90%] mx-auto flex justify-between items-center h-[100%]'>
+               <div className='w-[85%] mx-auto flex justify-between items-center h-[100%]'>
                     <div className='flex gap-[20px] items-center'>
                                     <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
                                     <span>usman ogunnaike</span>
@@ -53,7 +53,7 @@ const ChatHome = () => {
 
             <div className='bg-[#EDF0F9]  h-[72vh] pt-[30px]'>
 
-                    <div className="flex-1 px-[25px] h-[55vh] overflow-y-auto space-y-4">
+                    <div className="flex-1 px-[80px] h-[55vh] overflow-y-auto space-y-4">
                     
                     {/* Response message (left) */}
                     <div className="flex items-start gap-[10px] ">
@@ -183,7 +183,7 @@ export default ChatHome
 
 export const ChatMessages = () =>{
     return(
-        <div className='flex h-[10vh] py-[10px] px-[10px]  justify-between w-[90%] rounded-[10px] hover:bg-[#dbdada] mx-auto border-t-[1px] border-[#d7d7d9]'>
+    <div className='flex h-[10vh] py-[10px] px-[10px]  justify-between w-[90%] rounded-[10px] hover:bg-[#dbdada] mx-auto border-t-[1px] border-[#d7d7d9]'>
         <div className='flex gap-[15px] items-center'>
         <img className='h-[40px] w-[40px] rounded-[50%]' src="https://images.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg" alt="" />
             <div className='flex flex-col  h-[100%] justify-between'>
@@ -192,7 +192,7 @@ export const ChatMessages = () =>{
             </div>
         </div>
 
-        <span className='text-[16px] text-blue-500'>8:08 pm</span>
+        <div className='text-[16px] text-blue-500 whitespace-nowrap'>8:08 pm</div>
     </div>
     )
 }
