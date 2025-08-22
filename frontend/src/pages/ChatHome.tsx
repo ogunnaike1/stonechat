@@ -24,7 +24,7 @@ const ChatHome = () => {
       setMessage(e.target.value);
     };
   return (
-    <div className='flex'>
+    <div className='flex justify-center '>
         <div className='w-[70vw] relative lg:block hidden'>
             <div className='h-[15vh] w-full !bg-blue-500 flex justify-between items-center text-white'>
                 <button onClick={()=>setOpenedSidebar(true)}  className='ml-[25px] text-[25px]'><RxHamburgerMenu /></button>
@@ -137,7 +137,7 @@ const ChatHome = () => {
         </div>
         
          {/* Second div */}
-        <div className='lg:w-[30vw] w-full'>
+        <div className='lg:w-[30vw] md:w-[50%] '>
             <div className='h-[15vh] w-full  !bg-blue-700 '>
                 <div className='text-white flex w-[90%] pt-[10px] mx-auto items-center justify-between'>
                     <span className='text-[20px] font-[700]'>STONECHAT</span>
