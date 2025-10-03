@@ -4,7 +4,7 @@ import { FaEnvelope, FaArrowLeft, FaPhone } from "react-icons/fa";
 const ForgotPasswordForm = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-lg">
+      <div className="w-full max-w-md md:max-w-lg lg:max-w-xl ">
         <div className="bg-white shadow-md rounded-lg p-6 sm:p-8">
           <form className="space-y-6">
             {/* Title */}
