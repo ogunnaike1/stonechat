@@ -9,8 +9,14 @@ const userSignUp = async(req, res)=>{
         console.log(username)
 
         if(!username || !email || !password){
-            console.log("missing detail")
-        }else{
+            return console.log("missing detail")
+        }
+
+        const existingUser = await userModel.findOne({ email });
+        if (existingUser){
+            return res.status(400).json({ message: "Email already exists" });
+
+        } else{
             const user = await  userModel.create({
                 username,
                 email,
@@ -37,4 +43,14 @@ const userSignUp = async(req, res)=>{
 
 }
 
+const loginUser = async(req, res) =>{
+    try {
+
+
+        
+    } catch (error) {
+        
+    }
+
+}
 module.exports = {userSignUp}
