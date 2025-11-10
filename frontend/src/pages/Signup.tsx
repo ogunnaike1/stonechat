@@ -1,6 +1,54 @@
-import { Link as RouterLink } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleChange = (e: { target: { type: string; value: any; }; }) => {
+    setFormData({
+      ...formData,
+      [e.target.type === "text" ? "username" : e.target.type]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const res = await axios.post("http://localhost:4000/user/signup", formData);
+      setMessage(res.data.message || "Sign-up successful!");
+
+      setTimeout(() => {
+        navigate("/auth/login");
+      }, 1500);
+      
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        // This ensures 'error' is an AxiosError, so TS knows it has 'response'
+        setMessage(error.response?.data?.message || "Something went wrong!");
+      } else if (error instanceof Error) {
+        // Generic JS error (not Axios)
+        setMessage(error.message);
+      } else {
+        // Fallback for anything else
+        setMessage("An unexpected error occurred.");
+      }
+    }
+    
+  };
+
   return (
 <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
   <div className="w-full max-w-md md:max-w-lg lg:max-w-xl">
@@ -11,24 +59,22 @@ const SignUp = () => {
           Sign up
         </h2>
 
-        {/* Name Fields */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-4">
-          <input
+        {/* userName Fields */}
+
+        <input
             type="text"
-            placeholder="First name"
-            className="flex-1 border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Enter User Name"
+            value={formData.username}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          <input
-            type="text"
-            placeholder="Last name"
-            className="flex-1 border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
 
         {/* Email */}
         <input
           type="email"
           placeholder="Enter email"
+          value={formData.email}
+          onChange={handleChange}
           className="w-full border px-3 py-2 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
@@ -36,16 +82,24 @@ const SignUp = () => {
         <input
           type="password"
           placeholder="Enter password"
+          value={formData.password}
+          onChange={handleChange}
           className="w-full border px-3 py-2 rounded-md mb-6 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
         {/* Sign Up Button */}
         <button
           type="button"
+          onClick={handleSubmit}
+          disabled={loading}
           className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition"
         >
-          Sign up
+          {loading ? "Signing up..." : "Sign up"}
         </button>
+
+        {message && (
+            <p className="mt-4 text-center text-sm text-gray-600">{message}</p>
+          )}
 
         {/* Login Link */}
         <div className="mt-4 text-sm text-center text-gray-600">
