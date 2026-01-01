@@ -1,26 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoMdSearch } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../utils/auth";
+import LogoutModal from "../components/LogoutModal";
 import type { Conversation } from "./ChatRoom";
 
 /* ---------- PROPS ---------- */
-
 type MessageListProps = {
   conversations: Conversation[];
-  setActiveChat: (chat: Conversation) => void; // ✅ FIXED
+  setActiveChat: (chat: Conversation) => void;
 };
 
 const MessageList = ({ conversations, setActiveChat }: MessageListProps) => {
+  const [showLogout, setShowLogout] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/auth/login");
+  };
+
   return (
     <div className="lg:w-[30vw] w-full border-r">
       {/* HEADER */}
       <div className="bg-blue-700 pb-4">
         <div className="text-white flex w-[90%] pt-3 mx-auto justify-between">
           <span className="text-xl font-bold">STONECHAT</span>
+
           <div className="flex gap-4 text-lg cursor-pointer">
             <FaPlus />
-            <BsThreeDotsVertical />
+            <button onClick={() => setShowLogout(true)}>
+              <BsThreeDotsVertical />
+            </button>
           </div>
         </div>
 
@@ -59,6 +72,14 @@ const MessageList = ({ conversations, setActiveChat }: MessageListProps) => {
           </div>
         ))}
       </div>
+
+      {/* LOGOUT MODAL */}
+      {showLogout && (
+        <LogoutModal
+          onConfirm={handleLogout}
+          onCancel={() => setShowLogout(false)}
+        />
+      )}
     </div>
   );
 };

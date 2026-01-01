@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import SignUp from "./pages/auth/Signup";
 import LoginForm from "./pages/auth/Login";
-import ForgotPasswordForm from "./pages/ForgotPassword";
+import ForgotPasswordForm from "./pages/Forgotpassword";
 import ResetPasswordForm from "./pages/ResetPassword";
 import ChatHome from "./pages/ChatHome";
 import ProtectedRoute from "./components/ProtectedRoute";
