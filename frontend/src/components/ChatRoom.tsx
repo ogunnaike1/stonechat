@@ -1,11 +1,12 @@
-import React, { useRef, useState, type ChangeEvent } from "react";
+import React, { useRef, useState, useEffect, type ChangeEvent } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { FaChevronRight } from "react-icons/fa6";
 import ChatInput from "./ChatInput";
 import Sidebar from "./Sidebar";
+import { socket } from "../socket";
+import api from "../api/axios"; // Axios instance pointing to your backend
 
 /* ---------- TYPES ---------- */
-
 export type Message = {
   text: string;
   sender: "me" | "other";
@@ -21,141 +22,140 @@ export type Conversation = {
 };
 
 /* ---------- MESSAGE BUBBLE ---------- */
-
 type MessageBubbleProps = {
   msg: Message;
   otherAvatar: string;
   myAvatar: string;
 };
 
-const MessageBubble = ({
-  msg,
-  otherAvatar,
-  myAvatar,
-}: MessageBubbleProps) => {
+const MessageBubble = ({ msg, otherAvatar, myAvatar }: MessageBubbleProps) => {
   const isMe = msg.sender === "me";
 
   return (
-    <div
-      className={`flex items-start gap-2 ${
-        isMe ? "justify-end" : "justify-start"
-      }`}
-    >
-      {/* OTHER USER AVATAR (LEFT) */}
-      {!isMe && (
-        <img
-          src={otherAvatar}
-          className="h-8 w-8 rounded-full"
-          alt="sender avatar"
-        />
-      )}
-  
-      {/* OTHER USER: BUBBLE THEN TIME */}
+    <div className={`flex items-start gap-2 ${isMe ? "justify-end" : "justify-start"}`}>
+      {!isMe && <img src={otherAvatar} className="h-8 w-8 rounded-full" alt="sender avatar" />}
       {!isMe && (
         <>
-          <div
-            className="px-4 py-2 rounded-lg max-w-xs bg-white text-gray-800 rounded-bl-none"
-          >
+          <div className="px-4 py-2 rounded-lg max-w-xs bg-white text-gray-800 rounded-bl-none">
             {msg.text}
           </div>
           <span className="text-[10px] text-gray-400 mt-1">{msg.time}</span>
         </>
       )}
-  
-      {/* MY BUBBLE */}
+
       {isMe && (
         <>
-          {/* TIME BEFORE BUBBLE */}
           <span className="text-[10px] text-gray-400 mt-1">{msg.time}</span>
-          <div
-            className="px-4 py-2 rounded-lg max-w-xs bg-blue-500 text-white rounded-br-none"
-          >
+          <div className="px-4 py-2 rounded-lg max-w-xs bg-blue-500 text-white rounded-br-none">
             {msg.text}
           </div>
-          {/* MY AVATAR (RIGHT) */}
-          <img
-            src={myAvatar}
-            className="h-8 w-8 rounded-full"
-            alt="my avatar"
-          />
+          <img src={myAvatar} className="h-8 w-8 rounded-full" alt="my avatar" />
         </>
       )}
     </div>
   );
-  
 };
 
 /* ---------- CHAT ROOM ---------- */
-
 type ChatRoomProps = {
   activeChat: Conversation | null;
   conversations: Conversation[];
   setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>;
+  loggedInUser: string; // Pass logged-in username here
+  myAvatar: string; // Pass avatar URL
 };
 
-const ChatRoom = ({
-  activeChat,
-  conversations,
-  setConversations,
-}: ChatRoomProps) => {
+const ChatRoom = ({ activeChat, conversations, setConversations, loggedInUser, myAvatar }: ChatRoomProps) => {
   const [message, setMessage] = useState("");
   const [openedSidebar, setOpenedSidebar] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  // ✅ SINGLE SOURCE OF TRUTH
-  const currentChat = conversations.find(
-    (c) => c.name === activeChat?.name
-  );
+  const currentChat = conversations.find((c) => c.name === activeChat?.name);
 
-  const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value);
-  };
+  /* ---------- RECEIVE MESSAGE (REAL-TIME) ---------- */
+  useEffect(() => {
+    socket.on("receive_message", (msg: any) => {
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.name === msg.from
+            ? {
+                ...conv,
+                lastMessage: msg.text,
+                time: msg.time,
+                messages: [...conv.messages, { text: msg.text, sender: "other", time: msg.time }],
+              }
+            : conv
+        )
+      );
+    });
+
+    return () => {
+      socket.off("receive_message");
+    };
+  }, [setConversations]);
+
+  /* ---------- FETCH MESSAGES ON CHAT SELECT ---------- */
+  useEffect(() => {
+    if (!currentChat) return;
+
+    const fetchMessages = async () => {
+      try {
+        const res = await api.get(`/api/messages/${loggedInUser}/${currentChat.name}`);
+        const messages: Message[] = res.data.map((msg: any) => ({
+          text: msg.text,
+          sender: msg.from === loggedInUser ? "me" : "other",
+          time: msg.time,
+        }));
+
+        setConversations((prev) =>
+          prev.map((conv) =>
+            conv.name === currentChat.name ? { ...conv, messages } : conv
+          )
+        );
+      } catch (err) {
+        console.error("Failed to fetch messages:", err);
+      }
+    };
+
+    fetchMessages();
+  }, [currentChat, loggedInUser, setConversations]);
+
+  /* ---------- AUTO-SCROLL TO BOTTOM ---------- */
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [currentChat?.messages]);
+
+  const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value);
 
   const handleSend = () => {
     if (!message.trim() || !currentChat) return;
 
-    const myMessage: Message = {
-      text: message,
-      sender: "me",
-      time: new Date().toLocaleTimeString(),
-    };
+    const time = new Date().toLocaleTimeString();
 
+    // Optimistic UI
     setConversations((prev) =>
       prev.map((conv) =>
         conv.name === currentChat.name
           ? {
               ...conv,
-              lastMessage: myMessage.text,
-              time: myMessage.time,
-              messages: [...conv.messages, myMessage],
+              lastMessage: message,
+              time,
+              messages: [...conv.messages, { text: message, sender: "me", time }],
             }
           : conv
       )
     );
 
+    // Emit to backend
+    socket.emit("send_message", {
+      from: loggedInUser,
+      to: currentChat.name,
+      text: message,
+      time,
+    });
+
     setMessage("");
-
-    // Simulated reply (LEFT)
-    setTimeout(() => {
-      const reply: Message = {
-        text: "Reply received 👍",
-        sender: "other",
-        time: new Date().toLocaleTimeString(),
-      };
-
-      setConversations((prev) =>
-        prev.map((conv) =>
-          conv.name === currentChat.name
-            ? {
-                ...conv,
-                lastMessage: reply.text,
-                time: reply.time,
-                messages: [...conv.messages, reply],
-              }
-            : conv
-        )
-      );
-    }, 1000);
   };
 
   if (!currentChat) {
@@ -170,17 +170,9 @@ const ChatRoom = ({
     <div className="w-[70vw] hidden lg:block">
       {/* HEADER */}
       <div className="h-[16vh] bg-blue-500 flex items-center justify-between px-6 text-white">
-        <RxHamburgerMenu
-          className="text-2xl cursor-pointer"
-          onClick={() => setOpenedSidebar(true)}
-        />
-
+        <span  className="text-2xl cursor-pointer" onClick={() => setOpenedSidebar(true)} >  <RxHamburgerMenu/></span>
         <div className="flex items-center gap-3">
-          <img
-            src={currentChat.avatar}
-            className="h-10 w-10 rounded-full"
-            alt={currentChat.name}
-          />
+          <img src={currentChat.avatar} className="h-10 w-10 rounded-full" alt={currentChat.name} />
           <span>{currentChat.name}</span>
           <FaChevronRight />
         </div>
@@ -190,21 +182,12 @@ const ChatRoom = ({
       <div className="bg-[#EDF0F9] h-[72vh] flex flex-col justify-between">
         <div className="flex-1 px-10 py-6 overflow-y-auto space-y-4">
           {currentChat.messages.map((msg, i) => (
-            <MessageBubble
-              key={i}
-              msg={msg}
-              otherAvatar={currentChat.avatar}
-              myAvatar="https://randomuser.me/api/portraits/men/75.jpg"
-            />
+            <MessageBubble key={i} msg={msg} otherAvatar={currentChat.avatar} myAvatar={myAvatar} />
           ))}
+          <div ref={messagesEndRef} />
         </div>
 
-        <ChatInput
-          message={message}
-          textareaRef={textareaRef}
-          handleInput={handleInput}
-          onSend={handleSend}
-        />
+        <ChatInput message={message} textareaRef={textareaRef} handleInput={handleInput} onSend={handleSend} />
       </div>
 
       {openedSidebar && <Sidebar onClose={() => setOpenedSidebar(false)} />}

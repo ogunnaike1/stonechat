@@ -1,68 +1,52 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import api from "../../api/axios";
 
 const LoginForm = () => {
-  const [show, setShow] = useState(false);
-  const handleClick = () => setShow(!show);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleSubmit = async () => {
+    try {
+      const res = await api.post("/user/login", formData);
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      toast.success("Login successful!");
+      navigate("/chathome");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Login failed!");
+    }
+  };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
-      <div className="w-full max-w-md md:max-w-lg lg:max-w-xl bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-center text-2xl md:text-3xl font-bold text-gray-800 mb-6">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="bg-white p-6 rounded-lg w-full max-w-md">
+        <input
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          className="w-full mb-4 border px-3 py-2 rounded"
+        />
+
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          className="w-full mb-4 border px-3 py-2 rounded"
+        />
+
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-blue-600 text-white py-2 rounded"
+        >
           Login
-        </h2>
-
-        <div className="space-y-4">
-          {/* Email */}
-          <input
-            type="email"
-            placeholder="Enter email"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
-          />
-
-          {/* Password */}
-          <div className="flex items-center w-full border border-gray-300 rounded-lg focus-within:border-blue-500">
-            <input
-                type={show ? "text" : "password"}
-                placeholder="Enter password"
-                className="flex-1 px-4 py-2 focus:outline-none min-w-0"
-            />
-            <button
-                type="button"
-                onClick={handleClick}
-                className="px-3 text-sm text-blue-600 hover:underline whitespace-nowrap"
-            >
-                {show ? "Hide" : "Show"}
-            </button>
-        </div>
-
-
-          {/* Login Button */}
-          <button className="w-full !bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-            Login
-          </button>
-
-          {/* Forgot Password */}
-          <div className="text-right">
-            <Link
-              to="/auth/forgot-password"
-              className="text-sm text-gray-500 hover:text-blue-600"
-            >
-              Forgot Password?
-            </Link>
-          </div>
-
-          {/* Sign up */}
-          <div className="flex justify-center text-sm text-gray-500">
-            <span>Don't have an account?</span>
-            <Link
-              to="/"
-              className="ml-1 text-blue-600 hover:underline"
-            >
-              Sign up
-            </Link>
-          </div>
-        </div>
+        </button>
       </div>
     </div>
   );
