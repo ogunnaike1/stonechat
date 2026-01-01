@@ -36,11 +36,7 @@ const MessageBubble = ({ msg, otherAvatar, myAvatar }: MessageBubbleProps) => {
   const isMe = msg.sender === "me";
 
   return (
-    <div
-      className={`flex items-start gap-2 ${
-        isMe ? "justify-end" : "justify-start"
-      }`}
-    >
+    <div className={`flex items-start gap-2 ${isMe ? "justify-end" : "justify-start"}`}>
       {!isMe && <img src={otherAvatar} className="h-8 w-8 rounded-full" alt="sender avatar" />}
       {!isMe && (
         <>
@@ -73,13 +69,7 @@ type ChatRoomProps = {
   myAvatar: string;
 };
 
-const ChatRoom = ({
-  activeChat,
-  conversations,
-  setConversations,
-  loggedInUser,
-  myAvatar,
-}: ChatRoomProps) => {
+const ChatRoom = ({ activeChat, conversations, setConversations, loggedInUser, myAvatar }: ChatRoomProps) => {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [openedSidebar, setOpenedSidebar] = useState(false);
@@ -90,7 +80,7 @@ const ChatRoom = ({
 
   const currentChat = conversations.find(c => c.name === activeChat?.name);
 
-  /* ---------- RECEIVE MESSAGE ---------- */
+  /* ---------- RECEIVE MESSAGE VIA SOCKET ---------- */
   useEffect(() => {
     const handleMessage = (msg: any) => {
       setConversations(prev =>
@@ -109,24 +99,22 @@ const ChatRoom = ({
         )
       );
     };
-  
+
     socket.on("receive_message", handleMessage);
-  
-    // Cleanup function to remove the listener
+
     return () => {
       socket.off("receive_message", handleMessage);
     };
   }, [setConversations]);
-  
 
-  /* ---------- FETCH MESSAGES ---------- */
+  /* ---------- FETCH MESSAGES ON CHAT SELECT (MERGE INSTEAD OF REPLACE) ---------- */
   useEffect(() => {
     if (!currentChat) return;
 
     const fetchMessages = async () => {
       try {
         const res = await api.get(`/api/messages/${loggedInUser}/${currentChat.name}`);
-        const messages: Message[] = res.data.map((msg: any) => ({
+        const fetchedMessages: Message[] = res.data.map((msg: any) => ({
           text: msg.text,
           sender: msg.from === loggedInUser ? "me" : "other",
           time: formatTime(msg.time),
@@ -134,7 +122,16 @@ const ChatRoom = ({
 
         setConversations(prev =>
           prev.map(conv =>
-            conv.name === currentChat.name ? { ...conv, messages } : conv
+            conv.name === currentChat.name
+              ? {
+                  ...conv,
+                  messages: [
+                    // Merge fetched messages with existing messages to prevent overwriting optimistic updates
+                    ...conv.messages.filter(m => m.sender === "me"), 
+                    ...fetchedMessages.filter(m => m.sender === "other"),
+                  ],
+                }
+              : conv
           )
         );
       } catch (err) {
@@ -145,19 +142,20 @@ const ChatRoom = ({
     fetchMessages();
   }, [currentChat, loggedInUser, setConversations]);
 
-  /* ---------- AUTO SCROLL ---------- */
+  /* ---------- AUTO SCROLL TO BOTTOM ---------- */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentChat?.messages]);
 
   const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value);
 
+  /* ---------- SEND MESSAGE ---------- */
   const handleSend = () => {
     if (!message.trim() || !currentChat) return;
 
     const time = formatTime();
 
-    // Optimistic update
+    // Optimistic update: show message immediately
     setConversations(prev =>
       prev.map(conv =>
         conv.name === currentChat.name
@@ -171,6 +169,7 @@ const ChatRoom = ({
       )
     );
 
+    // Emit to socket
     socket.emit("send_message", {
       from: loggedInUser,
       to: currentChat.name,
@@ -178,7 +177,7 @@ const ChatRoom = ({
       time,
     });
 
-    setMessage("");
+    setMessage(""); // clear input
   };
 
   const handleLogout = () => {
@@ -218,12 +217,7 @@ const ChatRoom = ({
           <div ref={messagesEndRef} />
         </div>
 
-        <ChatInput
-          message={message}
-          textareaRef={textareaRef}
-          handleInput={handleInput}
-          onSend={handleSend}
-        />
+        <ChatInput message={message} textareaRef={textareaRef} handleInput={handleInput} onSend={handleSend} />
       </div>
 
       {/* SIDEBAR */}
