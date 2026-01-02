@@ -72,7 +72,7 @@ const ChatHome = () => {
 
       setActiveChat(chat);
     } catch (err) {
-      console.error("Failed to load messages:", err);
+    
     }
   };
 
