@@ -12,14 +12,9 @@ const ChatHome = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeChat, setActiveChat] = useState<Conversation | null>(null);
 
-  // Register user on socket
   useEffect(() => {
     if (!loggedInUser) return;
-
     socket.emit("register_user", { username: loggedInUser, avatar: myAvatar });
-    return () => {
-      socket.disconnect();
-    };
   }, [loggedInUser, myAvatar]);
 
   // Load all users
@@ -36,7 +31,7 @@ const ChatHome = () => {
             time: "",
             messages: [],
           }));
-        setConversations(users);
+        setConversations(sortConversations(users));
       } catch (err) {
         console.error(err);
       }
@@ -44,7 +39,14 @@ const ChatHome = () => {
     loadUsers();
   }, [loggedInUser]);
 
-  // Handle chat selection
+  const sortConversations = (convs: Conversation[]) => {
+    return [...convs].sort((a, b) => {
+      if (!a.time) return 1; // empty time goes to bottom
+      if (!b.time) return -1;
+      return new Date(b.time).getTime() - new Date(a.time).getTime();
+    });
+  };
+
   const handleSelectChat = async (chat: Conversation) => {
     try {
       const res = await api.get(`/api/messages/${loggedInUser}/${chat.name}`);
@@ -54,8 +56,8 @@ const ChatHome = () => {
         time: msg.time,
       }));
 
-      setConversations((prev) =>
-        prev.map((conv) =>
+      setConversations(prev => {
+        const updated = prev.map(conv =>
           conv.name === chat.name
             ? {
                 ...conv,
@@ -64,12 +66,13 @@ const ChatHome = () => {
                 time: messages[messages.length - 1]?.time || "",
               }
             : conv
-        )
-      );
+        );
+        return sortConversations(updated); // sort after updating
+      });
 
       setActiveChat(chat);
     } catch (err) {
-      console.error("Failed to load messages:", err);
+   
     }
   };
 

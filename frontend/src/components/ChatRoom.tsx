@@ -7,10 +7,8 @@ import Sidebar from "./Sidebar";
 import LogoutModal from "./LogoutModal";
 import { logout } from "../utils/auth";
 import { socket } from "../socket";
-import api from "../api/axios";
 import { formatTime } from "../utils/formatTime";
 
-/* ---------- TYPES ---------- */
 export type Message = {
   text: string;
   sender: "me" | "other";
@@ -25,7 +23,6 @@ export type Conversation = {
   messages: Message[];
 };
 
-/* ---------- MESSAGE BUBBLE ---------- */
 type MessageBubbleProps = {
   msg: Message;
   otherAvatar: string;
@@ -36,31 +33,27 @@ const MessageBubble = ({ msg, otherAvatar, myAvatar }: MessageBubbleProps) => {
   const isMe = msg.sender === "me";
 
   return (
-    <div className={`flex items-start gap-2 ${isMe ? "justify-end" : "justify-start"}`}>
-      {!isMe && <img src={otherAvatar} className="h-8 w-8 rounded-full" alt="sender avatar" />}
+    <div className={`flex items-end mb-2 ${isMe ? "justify-end" : "justify-start"}`}>
       {!isMe && (
-        <>
-          <div className="px-4 py-2 rounded-lg max-w-xs bg-white text-gray-800 rounded-bl-none">
-            {msg.text}
-          </div>
-          <span className="text-[10px] text-gray-400 mt-1">{msg.time}</span>
-        </>
+        <img src={otherAvatar} alt="sender avatar" className="h-8 w-8 rounded-full" />
       )}
-
+      <div
+        className={`max-w-xs px-4 py-2 rounded-lg break-words ${
+          isMe
+            ? "bg-blue-500 text-white rounded-br-none ml-2"
+            : "bg-white text-gray-800 rounded-bl-none mr-2"
+        }`}
+      >
+        {msg.text}
+        <div className="text-[10px] text-gray-400 mt-1 text-right">{msg.time}</div>
+      </div>
       {isMe && (
-        <>
-          <span className="text-[10px] text-gray-400 mt-1">{msg.time}</span>
-          <div className="px-4 py-2 rounded-lg max-w-xs bg-blue-500 text-white rounded-br-none">
-            {msg.text}
-          </div>
-          <img src={myAvatar} className="h-8 w-8 rounded-full" alt="my avatar" />
-        </>
+        <img src={myAvatar} alt="my avatar" className="h-8 w-8 rounded-full" />
       )}
     </div>
   );
 };
 
-/* ---------- CHAT ROOM ---------- */
 type ChatRoomProps = {
   activeChat: Conversation | null;
   conversations: Conversation[];
@@ -80,84 +73,42 @@ const ChatRoom = ({ activeChat, conversations, setConversations, loggedInUser, m
 
   const currentChat = conversations.find(c => c.name === activeChat?.name);
 
-  /* ---------- RECEIVE MESSAGE VIA SOCKET ---------- */
+  // Listen for incoming messages
   useEffect(() => {
     const handleMessage = (msg: any) => {
-      setConversations(prev =>
-        prev.map(conv =>
+      setConversations(prev => {
+        const updated = prev.map(conv =>
           conv.name === msg.from
             ? {
                 ...conv,
                 lastMessage: msg.text,
-                time: formatTime(msg.time),
-                messages: [
-                  ...conv.messages,
-                  { text: msg.text, sender: "other", time: formatTime(msg.time) },
-                ],
+                time: msg.time,
+                messages: [...conv.messages, { text: msg.text, sender: "other", time: msg.time }],
               }
             : conv
-        )
-      );
+        );
+        return updated.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+      });
     };
-
     socket.on("receive_message", handleMessage);
-
-    return () => {
-      socket.off("receive_message", handleMessage);
-    };
+    return () => socket.off("receive_message", handleMessage);
   }, [setConversations]);
 
-  /* ---------- FETCH MESSAGES ON CHAT SELECT (MERGE INSTEAD OF REPLACE) ---------- */
-  useEffect(() => {
-    if (!currentChat) return;
-
-    const fetchMessages = async () => {
-      try {
-        const res = await api.get(`/api/messages/${loggedInUser}/${currentChat.name}`);
-        const fetchedMessages: Message[] = res.data.map((msg: any) => ({
-          text: msg.text,
-          sender: msg.from === loggedInUser ? "me" : "other",
-          time: formatTime(msg.time),
-        }));
-
-        setConversations(prev =>
-          prev.map(conv =>
-            conv.name === currentChat.name
-              ? {
-                  ...conv,
-                  messages: [
-                    // Merge fetched messages with existing messages to prevent overwriting optimistic updates
-                    ...conv.messages.filter(m => m.sender === "me"), 
-                    ...fetchedMessages.filter(m => m.sender === "other"),
-                  ],
-                }
-              : conv
-          )
-        );
-      } catch (err) {
-        console.error("Failed to fetch messages:", err);
-      }
-    };
-
-    fetchMessages();
-  }, [currentChat, loggedInUser, setConversations]);
-
-  /* ---------- AUTO SCROLL TO BOTTOM ---------- */
+  // Auto scroll when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentChat?.messages]);
 
   const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value);
 
-  /* ---------- SEND MESSAGE ---------- */
   const handleSend = () => {
     if (!message.trim() || !currentChat) return;
 
     const time = formatTime();
 
-    // Optimistic update: show message immediately
-    setConversations(prev =>
-      prev.map(conv =>
+    // Optimistic update and move to top
+    setConversations(prev => {
+      const updated = prev.map(conv =>
         conv.name === currentChat.name
           ? {
               ...conv,
@@ -166,10 +117,11 @@ const ChatRoom = ({ activeChat, conversations, setConversations, loggedInUser, m
               messages: [...conv.messages, { text: message, sender: "me", time }],
             }
           : conv
-      )
-    );
+      );
+      return updated.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+    });
 
-    // Emit to socket
+    // Emit message
     socket.emit("send_message", {
       from: loggedInUser,
       to: currentChat.name,
@@ -177,7 +129,7 @@ const ChatRoom = ({ activeChat, conversations, setConversations, loggedInUser, m
       time,
     });
 
-    setMessage(""); // clear input
+    setMessage("");
   };
 
   const handleLogout = () => {
@@ -200,7 +152,6 @@ const ChatRoom = ({ activeChat, conversations, setConversations, loggedInUser, m
         <span className="text-2xl cursor-pointer" onClick={() => setOpenedSidebar(true)}>
           <RxHamburgerMenu />
         </span>
-
         <div className="flex items-center gap-3">
           <img src={currentChat.avatar} className="h-10 w-10 rounded-full" alt={currentChat.name} />
           <span>{currentChat.name}</span>
@@ -220,10 +171,7 @@ const ChatRoom = ({ activeChat, conversations, setConversations, loggedInUser, m
         <ChatInput message={message} textareaRef={textareaRef} handleInput={handleInput} onSend={handleSend} />
       </div>
 
-      {/* SIDEBAR */}
       {openedSidebar && <Sidebar onClose={() => setOpenedSidebar(false)} />}
-
-      {/* LOGOUT MODAL */}
       {showLogout && <LogoutModal onConfirm={handleLogout} onCancel={() => setShowLogout(false)} />}
     </div>
   );

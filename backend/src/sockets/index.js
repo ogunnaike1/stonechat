@@ -11,29 +11,28 @@ module.exports = (server) => {
     // Register user
     socket.on("register_user", async ({ username, avatar }) => {
       if (!username) return;
-
-      await User.findOneAndUpdate(
-        { username },
-        { socketId: socket.id, avatar },
-        { new: true }
-      );
-
-      console.log(`${username} registered`);
+      await User.findOneAndUpdate({ username }, { socketId: socket.id, avatar }, { new: true });
+      console.log(`${username} registered with socket ${socket.id}`);
     });
 
     // Send message
     socket.on("send_message", async ({ from, to, text, time }) => {
       if (!from || !to || !text) return;
 
+      // Save message in DB
       const message = await Message.create({ from, to, text, time });
-      const receiver = await User.findOne({ username: to });
 
+      // Emit to receiver if online
+      const receiver = await User.findOne({ username: to });
       if (receiver?.socketId) {
-        io.to(receiver.socketId).emit("receive_message", message);
+        io.to(receiver.socketId).emit("receive_message", {
+          from,
+          text,
+          time,
+        });
       }
     });
 
-    // Handle disconnect
     socket.on("disconnect", async () => {
       await User.findOneAndUpdate({ socketId: socket.id }, { socketId: null });
       console.log("Disconnected:", socket.id);
