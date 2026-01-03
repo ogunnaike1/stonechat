@@ -43,7 +43,7 @@ const ForgotPasswordForm = () => {
             <div className="border rounded-lg p-4 space-y-4">
               <div className="flex items-center gap-4">
                 <div className="bg-green-500 w-14 h-14 rounded-full flex items-center justify-center">
-                  <FaPhone className="text-white text-xl" />
+                  <span className="text-white text-xl"> <FaPhone /></span>
                 </div>
                 <div>
                   <p className="text-gray-800 font-semibold text-sm sm:text-base">
