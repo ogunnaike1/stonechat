@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { IoMdSearch } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -21,10 +21,24 @@ const MessageList = ({ conversations, setActiveChat }: MessageListProps) => {
     navigate("/auth/login");
   };
 
-  // Sort conversations by latest time
-  const sortedConversations = [...conversations].sort(
-    (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
-  );
+  /**
+   * ✅ Correctly sort conversations by latest message time
+   */
+  const sortedConversations = useMemo(() => {
+    return [...conversations].sort((a, b) => {
+      // If both have no time → keep original order
+      if (!a.time && !b.time) return 0;
+
+      // If only A has no time → B comes first
+      if (!a.time) return 1;
+
+      // If only B has no time → A comes first
+      if (!b.time) return -1;
+
+      // Both have valid times → sort descending
+      return new Date(b.time).getTime() - new Date(a.time).getTime();
+    });
+  }, [conversations]);
 
   return (
     <div className="lg:w-[30vw] w-full border-r">
@@ -32,6 +46,7 @@ const MessageList = ({ conversations, setActiveChat }: MessageListProps) => {
       <div className="bg-blue-700 pb-4">
         <div className="text-white flex w-[90%] pt-3 mx-auto justify-between">
           <span className="text-xl font-bold">STONECHAT</span>
+
           <div className="flex gap-4 text-lg cursor-pointer">
             <FaPlus />
             <button onClick={() => setShowLogout(true)}>
@@ -43,7 +58,10 @@ const MessageList = ({ conversations, setActiveChat }: MessageListProps) => {
         {/* SEARCH */}
         <div className="w-[90%] mx-auto mt-4 bg-white h-10 px-4 flex items-center rounded-2xl">
           <IoMdSearch />
-          <input className="w-full ml-2 outline-none" placeholder="Search for a chat" />
+          <input
+            className="w-full ml-2 outline-none"
+            placeholder="Search for a chat"
+          />
         </div>
       </div>
 
@@ -56,18 +74,32 @@ const MessageList = ({ conversations, setActiveChat }: MessageListProps) => {
             className="flex justify-between items-center px-4 py-3 hover:bg-gray-200 cursor-pointer border-b"
           >
             <div className="flex gap-3 items-center">
-              <img src={user.avatar} className="h-10 w-10 rounded-full" alt={user.name} />
+              <img
+                src={user.avatar}
+                className="h-10 w-10 rounded-full"
+                alt={user.name}
+              />
               <div>
                 <p className="font-semibold">{user.name}</p>
-                <p className="text-sm text-gray-500 truncate">{user.lastMessage}</p>
+                <p className="text-sm text-gray-500 truncate">
+                  {user.lastMessage || "No messages yet"}
+                </p>
               </div>
             </div>
-            <span className="text-xs text-blue-500">{user.time}</span>
+
+            <span className="text-xs text-blue-500">
+              {user.time || ""}
+            </span>
           </div>
         ))}
       </div>
 
-      {showLogout && <LogoutModal onConfirm={handleLogout} onCancel={() => setShowLogout(false)} />}
+      {showLogout && (
+        <LogoutModal
+          onConfirm={handleLogout}
+          onCancel={() => setShowLogout(false)}
+        />
+      )}
     </div>
   );
 };
