@@ -87,7 +87,7 @@ const ChatRoom = ({ activeChat, conversations, setConversations, loggedInUser, m
               }
             : conv
         );
-       
+        return updated.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
       });
     };
     socket.on("receive_message", handleMessage);
