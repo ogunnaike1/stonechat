@@ -17,7 +17,7 @@ const SignUp = () => {
     try {
       const res = await api.post("/user/signup", formData);
       toast.success(res.data.message || "Sign-up successful!");
-    
+      setTimeout(() => navigate("/auth/login"), 1500);
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Sign-up failed!");
     } finally {
