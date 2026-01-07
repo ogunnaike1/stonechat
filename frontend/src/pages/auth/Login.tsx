@@ -33,7 +33,7 @@ const LoginForm = () => {
       const res = await api.post("/user/login", formData);
 
       localStorage.setItem("token", res.data.token);
-    
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
       toast.success("Login successful!");
       navigate("/chathome", { replace: true });
